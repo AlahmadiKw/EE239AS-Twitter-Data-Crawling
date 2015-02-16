@@ -10,7 +10,7 @@ import datetime, time
 # Convert unix time stamps to Y-M-D H:M:S
 #########################################
 def timestamp_to_str(unix_timestamp):
-	print(
+	return (
 	    datetime.datetime.fromtimestamp(
 	        int(unix_timestamp)
 	    ).strftime('%Y-%m-%d %H:%M:%S')
@@ -62,7 +62,7 @@ def top_5_tweets(term):
 	for tweet in tweets:
 		# pprint(tweet)
 		print tweet['author']['name']
-		timestamp_to_str(tweet['citation_date'])
+		print timestamp_to_str(tweet['citation_date'])
 		print tweet['highlight'], '\n'
 
 
@@ -81,4 +81,4 @@ if __name__ == '__main__':
 	# 		pprint(dat, f)
 	# 		f.write('\n-------------------------------------------------------\n\n')
 
-	top_5_tweets('#Oscars2015')
+	top_5_tweets('#UCLA')
