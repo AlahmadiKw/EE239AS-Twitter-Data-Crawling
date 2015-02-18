@@ -94,4 +94,4 @@ if __name__ == '__main__':
 	# 		pprint(dat, f)
 	# 		f.write('\n-------------------------------------------------------\n\n')
 
-	top_5_tweets('##GoPatriots')
+	top_5_tweets('#GoPatriots')
