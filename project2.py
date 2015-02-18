@@ -4,7 +4,9 @@ import urllib
 import httplib
 import datetime, time
 
-
+API_KEY = '09C43A9B270A470B8EB8F2946A9369F3'
+host = 'api.topsy.com'
+url = '/v2/content/tweets.json'
 
 #########################################
 # Convert unix time stamps to Y-M-D H:M:S
@@ -15,7 +17,6 @@ def timestamp_to_str(unix_timestamp):
 	        int(unix_timestamp)
 	    ).strftime('%Y-%m-%d %H:%M:%S')
 	)
-
 
 ###########################################
 # Question 1
@@ -32,10 +33,6 @@ def top_5_tweets(term):
 	end_date = datetime.datetime(2015,01,29, 17,15,0)
 	mintime = int(time.mktime(start_date.timetuple()))
 	maxtime = int(time.mktime(end_date.timetuple()))
-
-	API_KEY = '09C43A9B270A470B8EB8F2946A9369F3'
-	host = 'api.topsy.com'
-	url = '/v2/content/tweets.json'
 
 	#########   set query parameters
 	params = urllib.urlencode({'apikey' : API_KEY,
@@ -65,20 +62,36 @@ def top_5_tweets(term):
 		print timestamp_to_str(tweet['citation_date'])
 		print tweet['highlight'], '\n'
 
+	with open('top_tweets.txt', 'w+') as f:
+		for tweet in tweets:
+			f.write(json.dumps(tweet) + '\n')
+
+###########################################
+# Question 2
+# Get all tweets of any o nthe hashtags:
+#
+# *-------------------------------------*
+# | #Seahawks  |  #Patriots             |
+# | #GoHawks   |  #GoPatriots           |
+# | #Halftime  |  #superbowlcommercials |
+# |            |  #SuperBowlXLIX        |
+# *-------------------------------------*
+###########################################
+def top_5_tweets(term):
 
 
 
 
 if __name__ == '__main__':
 	# data = []
-	# with open('sample_output.txt', 'r') as js_dat:
+	# with open('q1_file.txt', 'r') as js_dat:
 	# 	for line in js_dat:
 	# 		# ret = json.loads(line)
 	# 		data.append(json.loads(line))
 
-	# with open('pprint_sample_output.txt', 'w+') as f:
+	# with open('pprint_q1_file.txt', 'w+') as f:
 	# 	for dat in data:
 	# 		pprint(dat, f)
 	# 		f.write('\n-------------------------------------------------------\n\n')
 
-	top_5_tweets('#UCLA')
+	top_5_tweets('#Oscars2015')
