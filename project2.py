@@ -68,7 +68,7 @@ def top_5_tweets(term):
 
 ###########################################
 # Question 2
-# Get all tweets of any o nthe hashtags:
+# Get all tweets of any of the hashtags:
 #
 # *-------------------------------------*
 # | #Seahawks  |  #Patriots             |
@@ -77,8 +77,8 @@ def top_5_tweets(term):
 # |            |  #SuperBowlXLIX        |
 # *-------------------------------------*
 ###########################################
-def top_5_tweets(term):
-
+def get_all_tweets(hashtag):
+	pass
 
 
 
@@ -94,4 +94,4 @@ if __name__ == '__main__':
 	# 		pprint(dat, f)
 	# 		f.write('\n-------------------------------------------------------\n\n')
 
-	top_5_tweets('#Oscars2015')
+	top_5_tweets('##GoPatriots')
