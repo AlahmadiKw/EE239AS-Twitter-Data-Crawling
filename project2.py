@@ -5,6 +5,7 @@ import httplib
 import datetime, time
 from pytz import timezone
 import csv
+import sys
 
 #########################################
 # API Parameters
