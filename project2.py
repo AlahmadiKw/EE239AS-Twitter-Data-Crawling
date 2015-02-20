@@ -6,6 +6,7 @@ import datetime, time
 from pytz import timezone
 import csv
 import sys
+import os
 
 #########################################
 # API Parameters
@@ -44,18 +45,20 @@ def send_query(params):
 
 			#########   get response and print out status
 			resp = req.getresponse()
+
+			if resp.status != 200:
+				raise Exception('%s, %s' % (resp.status, resp.reason))
+
+			#########   extract tweets
+			resp_content = resp.read()
+			ret = json.loads(resp_content)
+			tweets = ret['response']['results']['list']
 			keep_trying = False
 		except:
 			e = sys.exc_info()[0]
 			print "ERROR: %s ... trying again" % e
 
-	if resp.status != 200:
-		raise Exception('%s, %s' % (resp.status, resp.reason))
 
-	#########   extract tweets
-	resp_content = resp.read()
-	ret = json.loads(resp_content)
-	tweets = ret['response']['results']['list']
 	return tweets
 
 
@@ -175,7 +178,32 @@ WARNING reached maxmimum results.. adjusting time steps
 		end_frame = start_frame + t_frame_size
 		delta = end_date - end_frame
 
+###########################################
+# Question 3
+# To be added
+###########################################
+def _get_n_tweets(hashtag):
+	file_name = [name for name in os.listdir('q3_data')
+	             if name.startswith(hashtag)]
+	print 'file name is %s' % file_name[0]
+	print 'Reading file...'
+	total_tweets = 0
+	with open('q3_data/'+file_name[0]) as f:
+		f_csv = csv.reader(f)
+		for row in f_csv:
+			total_tweets = total_tweets + int(row[3])
+	print'--------------------'
+	print'Total tweets for %s = %d' % (hashtag, total_tweets)
+	print'--------------------\n'
 
+def n_of_tweets_for_all_hashtags():
+	hashtags = ['Seahawks','GoHawks'] #, 'Patriots', 'GoPatriots', 'Halftime',
+	            #'superbowlcommercials', 'SuperBowlXLIX']
+	for hashtag in hashtags:
+		_get_n_tweets(hashtag)
+
+def proccess_hashtag(hashtag):
+	pass
 
 if __name__ == '__main__':
 	# data = []
@@ -195,10 +223,13 @@ if __name__ == '__main__':
 	# Q2
 	# RUN ONE AT A TIME
 	# get_all_tweets('#Seahawks')
-	get_all_tweets('#Patriots')
+	# get_all_tweets('#Patriots')
 	# get_all_tweets('#GoHawks')
 	# get_all_tweets('#GoPatriots')
 	# get_all_tweets('#Halftime')
 	# get_all_tweets('#superbowlcommercials')
-	# get_all_tweets('#SuperBowlXLIX')
+	get_all_tweets('#SuperBowlXLIX')
+
+	#Q3
+	# n_of_tweets_for_all_hashtags()
 
