@@ -19,8 +19,8 @@ url = '/v2/content/tweets.json'
 # Time range for slot 21
 #########################################
 pacific = timezone('America/Los_Angeles')
-start_date = datetime.datetime(2015,01,14, tzinfo=pacific)
-end_date = datetime.datetime(2015,01,29, tzinfo=pacific)
+start_date = datetime.datetime(2015,01,14)
+end_date = datetime.datetime(2015,01,29)
 mintime = int(time.mktime(start_date.timetuple()))
 maxtime = int(time.mktime(end_date.timetuple()))
 
@@ -197,13 +197,55 @@ def _get_n_tweets(hashtag):
 	print'--------------------\n'
 
 def n_of_tweets_for_all_hashtags():
-	hashtags = ['Seahawks','GoHawks'] #, 'Patriots', 'GoPatriots', 'Halftime',
-	            #'superbowlcommercials', 'SuperBowlXLIX']
+	hashtags = ['Seahawks','GoHawks', 'Patriots', 'GoPatriots', 'Halftime',
+	            'superbowlcommercials', 'SuperBowlXLIX']
 	for hashtag in hashtags:
 		_get_n_tweets(hashtag)
 
 def proccess_hashtag(hashtag):
-	pass
+	### data:  start_time, endtime, number of tweets
+	file_name = [name for name in os.listdir('q3_data')
+	             if name.startswith(hashtag)]
+	data = []
+	with open('q3_data/'+file_name[0]) as f:
+		f_csv = csv.reader(f)
+		for row in f_csv:
+			start_time = datetime.datetime.fromtimestamp(int(row[1]))
+			end_time = datetime.datetime.fromtimestamp(int(row[2]))
+			s = timestamp_to_str(int(row[1]))
+			e = timestamp_to_str(int(row[2]))
+			n_of_tweets = int(row[3])
+			# print '%-15s%-30s%-30s%-15d' % (hashtag, s, e, n_of_tweets)
+			data.append((start_time, end_time, n_of_tweets))
+
+	format = '%Y-%m-%d %H:%M:%S'
+	i = 0
+	from_t = data[i][0]
+	count = data[i][2]
+	end = data[0][0]
+	tweets_per_time_step = []
+	while i < len(data):
+		while i <len(data) and (data[i][1]-from_t).seconds/3600<=3:
+			count += data[i][2]
+			to_t = data[i][1]
+			if (to_t-from_t).seconds/3600==2:
+				break
+			i += 1
+		# print (to_t-from_t).seconds/3600
+		# print '%-30s %-30s %d' % (from_t.strftime(format), to_t.strftime(format),
+		# 	                      count)
+		tweets_per_time_step.append((from_t, to_t, count))
+		from_t = to_t
+		count = 0
+
+	headers = ['From', 'To', 'Total_tweets']
+	with open('Q3_plot_SeaHawks.csv','w') as f:
+		f_csv = csv.writer(f)
+		f_csv.writerow(headers)
+		f_csv.writerows(tweets_per_time_step)
+
+
+
 
 if __name__ == '__main__':
 	# data = []
@@ -228,8 +270,9 @@ if __name__ == '__main__':
 	# get_all_tweets('#GoPatriots')
 	# get_all_tweets('#Halftime')
 	# get_all_tweets('#superbowlcommercials')
-	get_all_tweets('#SuperBowlXLIX')
+	# get_all_tweets('#SuperBowlXLIX')
 
 	#Q3
 	# n_of_tweets_for_all_hashtags()
+	proccess_hashtag('Seahawks')
 
