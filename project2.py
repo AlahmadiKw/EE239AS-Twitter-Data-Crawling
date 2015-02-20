@@ -234,11 +234,11 @@ def proccess_hashtag(hashtag):
 		# print (to_t-from_t).seconds/3600
 		# print '%-30s %-30s %d' % (from_t.strftime(format), to_t.strftime(format),
 		# 	                      count)
-		tweets_per_time_step.append((from_t, to_t, count))
+		tweets_per_time_step.append((from_t, to_t, count, count/2.0))
 		from_t = to_t
 		count = 0
 
-	headers = ['From', 'To', 'Total_tweets']
+	headers = ['From', 'To', 'Total_tweets', 'Tweets_div_by_2hr']
 	with open('Q3_plot_SeaHawks.csv','w') as f:
 		f_csv = csv.writer(f)
 		f_csv.writerow(headers)
