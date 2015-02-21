@@ -239,7 +239,7 @@ def get_plot_data(hashtag):
 		count = 0
 
 	headers = ['From', 'To', 'Total_tweets', 'Tweets_div_by_2hr']
-	with open('Q3_plot_SeaHawks.csv','w') as f:
+	with open('Q5_plot_'+hashtag+'.csv','w') as f:
 		f_csv = csv.writer(f)
 		f_csv.writerow(headers)
 		f_csv.writerows(tweets_per_time_step)
@@ -297,8 +297,8 @@ if __name__ == '__main__':
 
 	# Q3
 	# n_of_tweets_for_all_hashtags()
-	# get_plot_data('Seahawks')
+	get_plot_data('Patriots')
 
 	# Q4
-	process('Seahawks')
+	# process('Seahawks')
 
