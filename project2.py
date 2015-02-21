@@ -202,7 +202,7 @@ def n_of_tweets_for_all_hashtags():
 	for hashtag in hashtags:
 		_get_n_tweets(hashtag)
 
-def proccess_hashtag(hashtag):
+def get_plot_data(hashtag):
 	### data:  start_time, endtime, number of tweets
 	file_name = [name for name in os.listdir('q3_data')
 	             if name.startswith(hashtag)]
@@ -234,7 +234,7 @@ def proccess_hashtag(hashtag):
 		# print (to_t-from_t).seconds/3600
 		# print '%-30s %-30s %d' % (from_t.strftime(format), to_t.strftime(format),
 		# 	                      count)
-		tweets_per_time_step.append((from_t, to_t, count, count/2.0))
+		tweets_per_time_step.append((from_t, to_t, count, count/(2.0*3600)))
 		from_t = to_t
 		count = 0
 
@@ -244,6 +244,29 @@ def proccess_hashtag(hashtag):
 		f_csv.writerow(headers)
 		f_csv.writerows(tweets_per_time_step)
 
+###########################################
+# Question 4
+# To be added
+###########################################
+def process(hashtag):
+	# initialize retweet counters
+	retweet_counters = [0 for i in range(600)]
+
+	with open('q2_data/'+hashtag+'_tweets.txt') as f:
+		for line in f:
+			tweet_info = json.loads(line)
+			n_of_retweets = tweet_info['tweet']['retweet_count']
+			retweet_counters[n_of_retweets] += 1
+
+	rows = []
+	for i, val in enumerate(retweet_counters):
+		rows.append((i,val))
+	headers = ['number_of_retweets', 'number_of_occurances']
+
+	with open('Q4_plot_data.csv', 'w') as f:
+		f_csv = csv.writer(f)
+		f_csv.writerow(headers)
+		f_csv.writerows(rows)
 
 
 
@@ -272,7 +295,10 @@ if __name__ == '__main__':
 	# get_all_tweets('#superbowlcommercials')
 	# get_all_tweets('#SuperBowlXLIX')
 
-	#Q3
+	# Q3
 	# n_of_tweets_for_all_hashtags()
-	proccess_hashtag('Seahawks')
+	# get_plot_data('Seahawks')
+
+	# Q4
+	process('Seahawks')
 
