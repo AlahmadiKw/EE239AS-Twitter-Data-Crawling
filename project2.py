@@ -268,6 +268,19 @@ def process(hashtag):
 		f_csv.writerow(headers)
 		f_csv.writerows(rows)
 
+###########################################
+# Miscellaneous
+# concatenate files for hw submission
+###########################################
+def concatenate_files():
+	file_names = [name for name in os.listdir('q2_data')
+	             if name.endswith('search_log.txt')]
+	with open('q2_data/search_log.txt', 'w') as outfile:
+	    for fname in file_names:
+	        with open('q2_data/' + fname) as infile:
+	            for line in infile:
+	                outfile.write(line)
+
 
 
 if __name__ == '__main__':
@@ -297,8 +310,10 @@ if __name__ == '__main__':
 
 	# Q3
 	# n_of_tweets_for_all_hashtags()
-	get_plot_data('Patriots')
+	# get_plot_data('Patriots')
 
 	# Q4
 	# process('Seahawks')
+
+	concatenate_files()
 
