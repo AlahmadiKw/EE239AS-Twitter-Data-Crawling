@@ -7,6 +7,9 @@ from pytz import timezone
 import csv
 import sys
 import os
+import argparse
+import copy
+
 
 #########################################
 # API Parameters
@@ -65,11 +68,11 @@ def send_query(params):
 #########################################
 # Convert unix time stamps to Y-M-D H:M:S
 #########################################
-def timestamp_to_str(unix_timestamp):
+def timestamp_to_str(unix_timestamp, format='%Y-%m-%d %H:%M:%S'):
 	return (
 	    datetime.datetime.fromtimestamp(
 	        int(unix_timestamp)
-	    ).strftime('%Y-%m-%d %H:%M:%S')
+	    ).strftime(format)
 	)
 
 ###########################################
@@ -281,19 +284,19 @@ def concatenate_files():
 	            for line in infile:
 	                outfile.write(line)
 
+def pprint_json():
+	data = []
+	with open('q1_file.txt', 'r') as js_dat:
+		for line in js_dat:
+			# ret = json.loads(line)
+			data.append(json.loads(line))
 
+	with open('pprint_q1_file.txt', 'w+') as f:
+		for dat in data:
+			pprint(dat, f)
+			f.write('\n-------------------------------------------------------\n\n')
 
 if __name__ == '__main__':
-	# data = []
-	# with open('q1_file.txt', 'r') as js_dat:
-	# 	for line in js_dat:
-	# 		# ret = json.loads(line)
-	# 		data.append(json.loads(line))
-
-	# with open('pprint_q1_file.txt', 'w+') as f:
-	# 	for dat in data:
-	# 		pprint(dat, f)
-	# 		f.write('\n-------------------------------------------------------\n\n')
 
 	# Q1
 	# top_5_tweets('#GoPatriots')
@@ -310,10 +313,52 @@ if __name__ == '__main__':
 
 	# Q3
 	# n_of_tweets_for_all_hashtags()
-	# get_plot_data('Patriots')
+	# get_plot_data('Seahawks')
 
 	# Q4
 	# process('Seahawks')
 
-	concatenate_files()
+	# Q5
+	# get_plot_data('Patriots')
+
+	# Q6
+	# parser for a given file name to print tweet info based on optional criteria
+	parser = argparse.ArgumentParser()
+	parser.add_argument("filename", help="the name of the file containg the json data")
+	parser.add_argument("--user", "-u", help="return tweets by USER")
+	parser.add_argument("--date", "-d", help="return tweets on this date YYYY-MM-DD")
+	parser.add_argument("--numOfRet", "-r", type=int, help="return tweets retweeted NUMOFRET times")
+	parser.add_argument("--limit", "-l", type=int, default=10,
+		                help="maxmimum number of results to print")
+	args = parser.parse_args()
+	args_dict = vars(copy.deepcopy(args))
+	args_dict.pop('filename')
+	args_dict.pop('limit')
+	options = {(opt,val) for opt,val in args_dict.items() if val != None}
+	options = dict(options)
+
+	with open(args.filename, 'r') as f:
+		limit = args.limit
+		i = 0
+		for line in f:
+			if i >= limit:
+				break
+			tweet = json.loads(line)
+			search = dict()
+			search['user'] = tweet['author']['nick'].lower() == args.user.lower() if args.user!=None else ''
+			search['date'] = timestamp_to_str(tweet['citation_date'], '%Y-%m-%d') == args.date \
+			                 if args.date!=None else ''
+			search['numOfRet'] = int(tweet['tweet']['retweet_count']) == int(args.numOfRet) \
+			                     if args.numOfRet!=None else ''
+			text = tweet['highlight'] + '\n'
+			search = [value for key,value in search.items() if key in options]
+			if all(search):
+				print tweet['author']['nick']
+				print timestamp_to_str(tweet['citation_date'])
+				print 'Number of Retweets: ', tweet['tweet']['retweet_count']
+				print tweet['highlight'], '\n'
+				i += 1
+
+
+
 
